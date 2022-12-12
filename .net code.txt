@@ -1,0 +1,193 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+using Microsoft.EntityFrameworkCore;
+
+
+
+
+using EBS_API.Models;
+
+
+namespace EBS_API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class AdminsController : ControllerBase
+    {
+        private readonly EBSContext _context;
+
+        public AdminsController(EBSContext context)
+        {
+            _context = context;
+        }
+
+
+
+        // GET: api/Admins
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins() //   retrive  all ..display all details from admin table
+        {
+            return await _context.Admins.ToListAsync();
+        }
+
+
+
+        // GET: api/Admins/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Admin>> GetAdmin(decimal id)  // retreive single admin.... display admin details using id
+        {
+            var admin = await _context.Admins.FindAsync(id);
+
+            if (admin == null)
+            {
+                return NotFound();
+            }
+
+            return admin;
+        }
+
+
+
+        // PUT: api/Admins/5
+        [HttpPut("{id}")]
+
+        public async Task<IActionResult> PutAdmin(decimal id, Admin admin) // .... update  admin 
+        {
+            if (id != admin.AdminId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(admin).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AdminExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+        // POST: api/Admins
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)  //.... insert details
+        {
+            _context.Admins.Add(admin);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAdmin", new { id = admin.AdminId }, admin);
+        }
+
+
+
+        // DELETE: api/Admins/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAdmin(decimal id)
+        {
+            var admin = await _context.Admins.FindAsync(id);
+            if (admin == null)
+            {
+                return NotFound();
+            }
+
+            _context.Admins.Remove(admin);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+
+        private bool AdminExists(decimal id)
+        {
+            return _context.Admins.Any(e => e.AdminId == id);
+        }
+
+    }
+}
+
+.....................................................................................................................
+.....................................................................................................................
+
+using EBS_API.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+
+
+// angular connection  manually
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost:4200",
+                                              "http://localhost:3000").AllowCredentials().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders();
+                      });
+});
+// angular connection
+
+
+
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+
+// type manually
+builder.Services.AddDbContext<EBSContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyDBConnection")));
+builder.Services.AddAutoMapper(typeof(EBSContext));
+//type manually
+
+
+
+var app = builder.Build();   
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+app.UseStaticFiles();
+app.UseRouting();
+
+
+app.UseCors(MyAllowSpecificOrigins);
+
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+
