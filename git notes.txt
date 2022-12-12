@@ -1,0 +1,84 @@
+cd filename
+
+ls             = lists all the folders in the directory not the folders inside git
+
+git status     = gives status of all the folders in the directory
+
+git add index.html = stages the index file 
+git add --all  = stages all(new ,modified ,dleted) the files into staging environment 
+ 
+git commit -m "1st commit" = to commit 
+git push    (pushes to cloud)
+
+git log    = commit history
+
+git commit -help = gets commands related to commit
+git help --all  = gets all the commands 
+ 
+ git branch is used to create a new branch with specific name 
+ and work on the code in this newly created branch and 
+ after completing it, now merge the branch code to master branch code 
+
+git branch hellobranch  
+ new branch with name hellobranch created
+
+git branch
+ with this command we get branch names aailable 
+ so we can check wether our btranch is created or not
+ * symbol before the branch says we are currently in that pirticular branch 
+  so to move to our hello branch 
+
+git checkout hellobranch
+ after modifying code in branch
+
+git status
+git add --all
+git commit -m " branch commit"
+
+switch to master  branch by using comand 
+and merge hello branch to master
+git merge hellobranch
+
+we can delete hellobranch noe as it is no longer needed
+git branch -hellobranch
+
+
+
+git init  = to initialise 
+
+create a folder and go into that folder uding "cd foldername"
+go into newly created folder
+git clone (git link)
+
+after commiting inthe git hub
+goto folder where you need to pull (git fetch + git merge)
+cd users
+git pull (git code link)        
+
+
+
+Git rm
+Remove the files from the working tree and from the index
+$ git rm <file Name>
+Remove files from the Git But keep the files in your local repository:
+$ git rm --cached
+
+
+
+git revert it creates a new commit for the revert also
+Revert a particular commit:
+git revert 9a9add8
+
+
+Git reset(use git log and the  list comes select a commit code to ehere yo go back so that all the commits and changes made after that commit deltes)
+
+Reset the changes:
+git reset 9a9add8.
+
+
+
+
+
+
+
+  
